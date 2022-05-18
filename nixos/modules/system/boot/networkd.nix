@@ -170,6 +170,7 @@ let
       sectionVLAN = checkUnitConfig "VLAN" [
         (assertOnlyFields [
           "Id"
+          "Protocol"
           "GVRP"
           "MVRP"
           "LooseBinding"
@@ -177,6 +178,7 @@ let
         ])
         (assertInt "Id")
         (assertRange "Id" 0 4094)
+        (assertValueOneOf "Protocol" ["802.1q" "802.1ad"])
         (assertValueOneOf "GVRP" boolValues)
         (assertValueOneOf "MVRP" boolValues)
         (assertValueOneOf "LooseBinding" boolValues)
@@ -216,6 +218,7 @@ let
           "PortRange"
           "FlowLabel"
           "IPDoNotFragment"
+          "Independent"
         ])
         (assertInt "VNI")
         (assertRange "VNI" 1 16777215)
@@ -235,6 +238,7 @@ let
         (assertInt "FlowLabel")
         (assertRange "FlowLabel" 0 1048575)
         (assertValueOneOf "IPDoNotFragment" (boolValues + ["inherit"]))
+        (assertValueOneOf "Independent" boolValues)
       ];
 
       sectionTunnel = checkUnitConfig "Tunnel" [
@@ -499,6 +503,8 @@ let
           "DHCP"
           "DHCPServer"
           "LinkLocalAddressing"
+          "IPv6LinkLocalAddressGenerationMode"
+          "IPv6StableSecretAddress"
           "IPv4LLRoute"
           "DefaultRouteOnDevice"
           "LLMNR"
@@ -521,12 +527,15 @@ let
           "IPv6AcceptRA"
           "IPv6DuplicateAddressDetection"
           "IPv6HopLimit"
+          "IPv4AcceptLocal"
+          "IPv4RouteLocalnet"
           "IPv4ProxyARP"
           "IPv6ProxyNDP"
           "IPv6ProxyNDPAddress"
           "IPv6SendRA"
           "DHCPPrefixDelegation"
           "IPv6MTUBytes"
+          "KeepMaster"
           "Bridge"
           "Bond"
           "VRF"
@@ -543,11 +552,15 @@ let
           "Xfrm"
           "KeepConfiguration"
           "BatmanAdvanced"
+          "IPoIB"
+          "L2TP"
+          "MACVTAP"
         ])
         # Note: For DHCP the values both, none, v4, v6 are deprecated
         (assertValueOneOf "DHCP" ["yes" "no" "ipv4" "ipv6"])
         (assertValueOneOf "DHCPServer" boolValues)
         (assertValueOneOf "LinkLocalAddressing" ["yes" "no" "ipv4" "ipv6" "fallback" "ipv4-fallback"])
+        (assertValueOneOf "IPv6LinkLocalAddressGenerationMode" ["eui64" "none" "stable-privacy" "random"])
         (assertValueOneOf "IPv4LLRoute" boolValues)
         (assertValueOneOf "DefaultRouteOnDevice" boolValues)
         (assertValueOneOf "LLMNR" (boolValues ++ ["resolve"]))
@@ -565,11 +578,14 @@ let
         (assertMinimum "IPv6DuplicateAddressDetection" 0)
         (assertInt "IPv6HopLimit")
         (assertMinimum "IPv6HopLimit" 0)
+        (assertValueOneOf "IPv4AcceptLocal" boolValues)
+        (assertValueOneOf "IPv4RouteLocalnet" boolValues)
         (assertValueOneOf "IPv4ProxyARP" boolValues)
         (assertValueOneOf "IPv6ProxyNDP" boolValues)
         (assertValueOneOf "IPv6SendRA" boolValues)
         (assertValueOneOf "DHCPPrefixDelegation" boolValues)
         (assertByteFormat "IPv6MTUBytes")
+        (assertValueOneOf "KeepMaster" boolValues)
         (assertValueOneOf "ActiveSlave" boolValues)
         (assertValueOneOf "PrimarySlave" boolValues)
         (assertValueOneOf "ConfigureWithoutCarrier" boolValues)
@@ -791,9 +807,13 @@ let
 
       sectionIPv6AcceptRA = checkUnitConfig "IPv6AcceptRA" [
         (assertOnlyFields [
+          "Token"
           "UseDNS"
           "UseDomains"
           "RouteTable"
+          "UseMTU"
+          "UseGateway"
+          "UseRoutePrefix"
           "UseAutonomousPrefix"
           "UseOnLinkPrefix"
           "RouterDenyList"
@@ -812,6 +832,9 @@ let
         (assertValueOneOf "UseDNS" boolValues)
         (assertValueOneOf "UseDomains" (boolValues ++ ["route"]))
         (assertRange "RouteTable" 0 4294967295)
+        (assertValueOneOf "UseMTU" boolValues)
+        (assertValueOneOf "UseGateway" boolValues)
+        (assertValueOneOf "UseRoutePrefix" boolValues)
         (assertValueOneOf "UseAutonomousPrefix" boolValues)
         (assertValueOneOf "UseOnLinkPrefix" boolValues)
         (assertValueOneOf "DHCPv6Client" (boolValues ++ ["always"]))
