@@ -230,6 +230,7 @@ let
       sectionVLAN = checkUnitConfig "VLAN" [
         (assertOnlyFields [
           "Id"
+          "Protocol"
           "GVRP"
           "MVRP"
           "LooseBinding"
@@ -237,6 +238,7 @@ let
         ])
         (assertInt "Id")
         (assertRange "Id" 0 4094)
+        (assertValueOneOf "Protocol" ["802.1q" "802.1ad"])
         (assertValueOneOf "GVRP" boolValues)
         (assertValueOneOf "MVRP" boolValues)
         (assertValueOneOf "LooseBinding" boolValues)
@@ -703,6 +705,9 @@ let
           "Xfrm"
           "KeepConfiguration"
           "BatmanAdvanced"
+          "IPoIB"
+          "L2TP"
+          "MACVTAP"
         ])
         # Note: For DHCP the values both, none, v4, v6 are deprecated
         (assertValueOneOf "DHCP" (boolValues ++ ["ipv4" "ipv6"]))
@@ -986,9 +991,13 @@ let
 
       sectionIPv6AcceptRA = checkUnitConfig "IPv6AcceptRA" [
         (assertOnlyFields [
+          "Token"
           "UseDNS"
           "UseDomains"
           "RouteTable"
+          "UseMTU"
+          "UseGateway"
+          "UseRoutePrefix"
           "UseAutonomousPrefix"
           "UseOnLinkPrefix"
           "RouterDenyList"
@@ -1010,6 +1019,9 @@ let
         (assertValueOneOf "UseDNS" boolValues)
         (assertValueOneOf "UseDomains" (boolValues ++ ["route"]))
         (assertRange "RouteTable" 0 4294967295)
+        (assertValueOneOf "UseMTU" boolValues)
+        (assertValueOneOf "UseGateway" boolValues)
+        (assertValueOneOf "UseRoutePrefix" boolValues)
         (assertValueOneOf "UseAutonomousPrefix" boolValues)
         (assertValueOneOf "UseOnLinkPrefix" boolValues)
         (assertValueOneOf "DHCPv6Client" (boolValues ++ ["always"]))
