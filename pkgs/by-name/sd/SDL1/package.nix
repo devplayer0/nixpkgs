@@ -10,6 +10,7 @@
 , libICE
 , libXext
 , libXrandr
+, libcaca
 , libcap
 , libiconv
 , libpulseaudio
@@ -21,6 +22,7 @@
 , openglSupport ? libGLSupported
 , pulseaudioSupport ? config.pulseaudio or stdenv.hostPlatform.isLinux && !stdenv.hostPlatform.isAndroid && lib.meta.availableOn stdenv.hostPlatform libpulseaudio
 , x11Support ? !stdenv.hostPlatform.isCygwin && !stdenv.hostPlatform.isAndroid
+, cacaSupport ? false # x11Support || stdenv.isDarwin
 }:
 
 # NOTE: When editing this expression see if the same change applies to
@@ -58,7 +60,8 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs =
     [ ]
     ++ lib.optionals (!stdenv.hostPlatform.isMinGW && alsaSupport) [ audiofile ]
-    ++ lib.optionals stdenv.hostPlatform.isDarwin [ AudioUnit CoreAudio CoreServices Kernel OpenGL ];
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [ AudioUnit CoreAudio CoreServices Kernel OpenGL ]
+    ++ lib.optional cacaSupport libcaca;
 
   configureFlags = [
     "--disable-oss"
@@ -73,7 +76,8 @@ stdenv.mkDerivation (finalAttrs: {
   ] ++ lib.optional stdenv.hostPlatform.isDarwin "--disable-x11-shared"
     ++ lib.optional (!x11Support) "--without-x"
     ++ lib.optional alsaSupport "--with-alsa-prefix=${alsa-lib.out}/lib"
-    ++ lib.optional stdenv.hostPlatform.isMusl "CFLAGS=-DICONV_INBUF_NONCONST";
+    ++ lib.optional stdenv.hostPlatform.isMusl "CFLAGS=-DICONV_INBUF_NONCONST"
+    ++ lib.optional cacaSupport "--enable-video-caca";
 
   patches = [
     ./find-headers.patch
