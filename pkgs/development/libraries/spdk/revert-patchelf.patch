@@ -1,0 +1,41 @@
+diff --git a/mk/spdk.common.mk b/mk/spdk.common.mk
+index 03deb74f8..d8e8a2bfe 100644
+--- a/mk/spdk.common.mk
++++ b/mk/spdk.common.mk
+@@ -494,20 +494,18 @@ UNINSTALL_SHARED_LIB=\
+ INSTALL_APP=\
+ 	$(Q)echo "  INSTALL $(DESTDIR)$(bindir)/$(notdir $<)"; \
+ 	install -d -m 755 "$(DESTDIR)$(bindir)"; \
+-	install -m 755 "$<" "$(DESTDIR)$(bindir)/"; \
+-	patchelf --remove-rpath "$(DESTDIR)$(bindir)/$(notdir $<)" || true
++	install -m 755 "$<" "$(DESTDIR)$(bindir)/"
+ 
+ # Uninstall an app binary
+ UNINSTALL_APP=\
+-	$(Q)echo "  UNINSTALL $(DESTDIR)$(bindir)/$(notdir $(APP))"; \
++        $(Q)echo "  UNINSTALL $(DESTDIR)$(bindir)/$(notdir $(APP))"; \
+ 	rm -f "$(DESTDIR)$(bindir)/$(notdir $(APP))"; \
+ 	if [ -d "$(DESTDIR)$(bindir)" ] && [ $$(ls -A "$(DESTDIR)$(bindir)" | wc -l) -eq 0 ]; then rm -rf "$(DESTDIR)$(bindir)"; fi
+ 
+ INSTALL_EXAMPLE=\
+ 	$(Q)echo "  INSTALL $(DESTDIR)$(bindir)/spdk_$(strip $(subst /,_,$(subst $(SPDK_ROOT_DIR)/examples/, ,$(CURDIR))))"; \
+ 	install -d -m 755 "$(DESTDIR)$(bindir)"; \
+-	install -m 755 "$<" "$(DESTDIR)$(bindir)/spdk_$(strip $(subst /,_,$(subst $(SPDK_ROOT_DIR)/examples/, ,$(CURDIR))))"; \
+-	patchelf --remove-rpath "$(DESTDIR)$(bindir)/spdk_$(strip $(subst /,_,$(subst $(SPDK_ROOT_DIR)/examples/, ,$(CURDIR))))/$(notdir $<)" || true
++	install -m 755 "$<" "$(DESTDIR)$(bindir)/spdk_$(strip $(subst /,_,$(subst $(SPDK_ROOT_DIR)/examples/, ,$(CURDIR))))"
+ 
+ # Uninstall an example binary
+ UNINSTALL_EXAMPLE=\
+diff --git a/scripts/pkgdep/rhel.sh b/scripts/pkgdep/rhel.sh
+index cd56fd450..d838fc4af 100755
+--- a/scripts/pkgdep/rhel.sh
++++ b/scripts/pkgdep/rhel.sh
+@@ -100,7 +100,7 @@ fi
+ 
+ yum install -y gcc gcc-c++ make CUnit-devel libaio-devel openssl-devel \
+ 	libuuid-devel libiscsi-devel ncurses-devel json-c-devel libcmocka-devel \
+-	clang clang-devel python3-pip unzip keyutils keyutils-libs-devel fuse3-devel patchelf
++	clang clang-devel python3-pip unzip keyutils keyutils-libs-devel fuse3-devel
+ 
+ # Minimal install
+ # workaround for arm: ninja fails with dep on skbuild python module
