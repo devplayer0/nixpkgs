@@ -35,6 +35,10 @@ stdenv.mkDerivation rec {
     fetchSubmodules = true;
   };
 
+  patches = [
+    ./revert-patchelf.patch
+  ];
+
   nativeBuildInputs = [
     python3
     python3.pkgs.pip
@@ -84,10 +88,6 @@ stdenv.mkDerivation rec {
   postFixup = ''
     wrapPythonPrograms
   '';
-
-  env.NIX_CFLAGS_COMPILE = "-mssse3"; # Necessary to compile.
-  # otherwise does not find strncpy when compiling
-  env.NIX_LDFLAGS = "-lbsd";
 
   meta = with lib; {
     description = "Set of libraries for fast user-mode storage";
