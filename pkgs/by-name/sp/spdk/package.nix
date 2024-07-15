@@ -77,6 +77,10 @@ stdenv.mkDerivation rec {
     python3.pkgs.configshell-fb
   ];
 
+  patches = [
+    ./patches/revert-patchelf.patch
+  ];
+
   postPatch = ''
     patchShebangs .
     # Override uv pip install command to use hatchling directly without downloading dependencies
