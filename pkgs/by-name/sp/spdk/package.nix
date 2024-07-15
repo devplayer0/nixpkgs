@@ -94,6 +94,7 @@ stdenv.mkDerivation rec {
     # Otherwise the DPDK version is not detected correctly
     # Fix already upstream: https://github.com/spdk/spdk/commit/c3618c42ac3f6fdfcc9c04e29953fd6cf4f71c11
     ./patches/configure.patch
+    ./patches/revert-patchelf.patch
   ];
 
   postPatch = ''
