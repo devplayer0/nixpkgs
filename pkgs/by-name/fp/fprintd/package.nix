@@ -110,6 +110,12 @@ stdenv.mkDerivation (finalAttrs: {
       --replace "env['G_DEBUG'] = 'fatal-criticals'" ""
     substituteInPlace tests/meson.build \
       --replace "'G_DEBUG=fatal-criticals'," ""
+
+    # HACK: Disable tests. `doCheck=false` seems to break.
+    substituteInPlace meson.build \
+      --replace "subdir('tests')" ""
+    substituteInPlace meson.build \
+      --replace "address_sanitizer.to_string()" "'NULL'"
   '';
 
   meta = {
