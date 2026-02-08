@@ -27,6 +27,7 @@ let
     (valFlag "banlist" cfg.banListPath)
     (boolFlag "secure" cfg.secure)
     (boolFlag "noupnp" cfg.noUPnP)
+    (valFlag "config" cfg.configFile)
   ];
 
   tmuxCmd = "${lib.getExe pkgs.tmux} -S ${lib.escapeShellArg cfg.dataDir}/terraria.sock";
@@ -141,6 +142,14 @@ in
         type = lib.types.bool;
         default = false;
         description = "Disables automatic Universal Plug and Play.";
+      };
+
+      configFile = lib.mkOption {
+        type = lib.types.nullOr lib.types.path;
+        default = null;
+        description = ''
+          Path to configuration file with extra options (e.g. secret password).
+        '';
       };
 
       openFirewall = lib.mkOption {
