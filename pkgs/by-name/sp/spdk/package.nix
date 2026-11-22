@@ -31,13 +31,13 @@
 stdenv.mkDerivation rec {
   pname = "spdk";
 
-  version = "26.01";
+  version = "26.09";
 
   src = fetchFromGitHub {
     owner = "spdk";
     repo = "spdk";
     tag = "v${version}";
-    hash = "sha256-E52VozjnoGnIC7viXrsualaaKXiUU9Fx8zGylTjBzX0=";
+    hash = "sha256-9LaQwzNmujWlBTMS422VpqheQWfSUuCvW7h450i9FIQ=";
     fetchSubmodules = true;
   };
 
@@ -47,6 +47,10 @@ stdenv.mkDerivation rec {
     python3.pkgs.hatchling
     python3.pkgs.wheel
     python3.pkgs.wrapPython
+    # Used by scripts/genrpc.py to generate the RPC headers
+    python3.pkgs.pyyaml
+    python3.pkgs.jinja2
+    python3.pkgs.tabulate
     pkg-config
     ensureNewerSourcesForZipFilesHook
   ];
@@ -85,15 +89,15 @@ stdenv.mkDerivation rec {
     patchShebangs .
     # Override uv pip install command to use hatchling directly without downloading dependencies
     substituteInPlace python/Makefile \
-      --replace-fail "uv pip install --prefix=\$(CONFIG_PREFIX)" \
-                     "python3 -m pip install --no-deps --no-build-isolation --prefix=\$(CONFIG_PREFIX)"
+      --replace-fail "uv pip install \$(USE_SYSTEM_PYTHON) --prefix=\$(DESTDIR)\$(CONFIG_PREFIX)" \
+                     "python3 -m pip install --no-deps --no-build-isolation --prefix=\$(DESTDIR)\$(CONFIG_PREFIX)"
   '';
 
   enableParallelBuilding = true;
 
-  # Required for the vendored isa-l version to find nasm
+  # The vendored isa-l only detects and checks nasm itself when AS is empty
   preConfigure = ''
-    export AS=nasm
+    unset AS
   '';
 
   configureFlags = [
